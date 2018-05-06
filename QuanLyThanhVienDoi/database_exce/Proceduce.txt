@@ -1,0 +1,111 @@
+
+--GET_ALL
+
+CREATE PROC getAllMembers
+AS
+begin 
+SELECT * FROM THANHVIEN
+end;
+
+--searchMember
+
+CREATE PROC searchMember
+@idThanhVien varchar(15)
+AS
+begin
+SELECT * from THANHVIEN
+WHERE idThanhVien = @idThanhVien
+end;
+
+--addMember
+
+CREATE PROC addMember 
+@idThanhVien varchar(15), 
+@matKhau varchar(10), 
+@hoVaTen nvarchar(30), 
+@soDienThoai varchar(15),
+@khoa varchar(5), 
+@truong nvarchar(50), 
+@ngaySinh date, 
+@queQuan nvarchar(50), 
+@diaChi nvarchar(50), 
+@phuongTien nvarchar(10), 
+@dangHoatDong nvarchar(10), 
+@diem int,
+@idNhom int,
+@flag int output
+AS
+Begin
+set @flag = 1;
+if Exists(select * from ThanhVien where idThanhVien = @idThanhVien)
+Begin
+	set @flag = 0;
+	return;
+end;
+Insert into ThanhVien values(@idThanhVien, 
+@matKhau, 
+@hoVaTen, 
+@soDienThoai,
+@khoa, 
+@truong, 
+@ngaySinh, 
+@queQuan, 
+@diaChi, 
+@phuongTien, 
+@dangHoatDong, 
+@diem);
+Insert into Nhom values(@idNhom, @idThanhVien)
+end;
+
+--updateMember
+
+CREATE PROC updateMember 
+@idThanhVien varchar(15), 
+@matKhau varchar(10), 
+@hoVaTen nvarchar(30), 
+@soDienThoai varchar(20),
+@khoa varchar(5), 
+@truong nvarchar(50), 
+@ngaySinh date, 
+@queQuan nvarchar(50), 
+@diaChi nvarchar(50), 
+@phuongTien nvarchar(10), 
+@dangHoatDong nvarchar(10), 
+@diem int,
+@idNhom int,
+@flag int output
+AS
+begin 
+set @flag = 1;
+If not Exists(select * from ThanhVien where idThanhVien = idThanhVien)
+begin
+	set @flag = 0;
+	return;
+end;
+Update ThanhVien
+set matKhau = @matKhau, 
+hoVaTen = @hoVaTen, 
+khoa = @khoa, 
+truong = @truong, 
+ngaySinh = @ngaySinh, 
+queQuan = @queQuan, 
+diaChi = @diaChi, 
+phuongTienDi = @phuongTien, 
+dangHoatDong = @dangHoatDong, 
+diem = @diem
+where idThanhVien = @idThanhVien;
+Update Nhom 
+set idNhom = @idNhom
+where idThanhVien = @idThanhVien
+end;
+
+--deleteMember
+
+create proc delMember @idThanhVien
+AS
+begin
+delete * from ThanhVien
+where idThanhVien = @idThanhVien;
+delete * from Nhom
+where idThanhVien = @idThanhVien;
+end;
